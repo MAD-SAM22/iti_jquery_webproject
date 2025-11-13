@@ -1,14 +1,53 @@
-/* global window, jQuery, PhonebookStore, PhonebookUtils, PhonebookValidation */
+/* global window, jQuery, PhonebookStore, PhonebookValidation */
 
-(function (global, $, store, utils, validation) {
+(function (global, $, store, validation) {
     "use strict";
 
-    if (!$ || !store || !utils || !validation) {
-        throw new Error("PhonebookUI requires jQuery, PhonebookStore, PhonebookUtils, and PhonebookValidation.");
+    if (!$ || !store || !validation) {
+        throw new Error("PhonebookUI requires jQuery, PhonebookStore, and PhonebookValidation.");
     }
 
     let selectedContactId = null;
     let elements = {};
+
+    function getInitials(name) {
+        if (!name || typeof name !== "string") {
+            return "NA";
+        }
+
+        return name
+            .split(" ")
+            .filter(Boolean)
+            .map((part) => part.charAt(0).toUpperCase())
+            .slice(0, 2)
+            .join("") || "NA";
+    }
+
+    function makeAvatarSrc(initials) {
+        const safeInitials = (initials || "NA").substring(0, 2);
+        const svg = [
+            '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">',
+            '<defs>',
+            '<linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">',
+            '<stop offset="0%" stop-color="#4f46e5" />',
+            '<stop offset="100%" stop-color="#7c3aed" />',
+            "</linearGradient>",
+            "</defs>",
+            '<rect width="96" height="96" rx="48" fill="url(#grad)" />',
+            `<text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="36" fill="#ffffff">${safeInitials}</text>`,
+            "</svg>",
+        ].join("");
+
+        return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+
+    function sanitizePhoneNumber(phone) {
+        if (typeof phone !== "string") {
+            return "";
+        }
+
+        return phone.replace(/[^0-9+]/g, "");
+    }
 
     function cacheElements() {
         elements = {
@@ -59,13 +98,47 @@
             );
         } else {
             contacts.forEach((contact) => {
-                const $link = $("<a>")
+                const initials = getInitials(contact.name);
+                const avatarSrc = makeAvatarSrc(initials);
+                const sanitizedTel = sanitizePhoneNumber(contact.phone);
+
+                const $detailsLink = $("<a>")
                     .attr("href", "#contact-details-page")
                     .attr("data-contact-id", contact.id)
-                    .append($("<h2>").text(contact.name))
-                    .append($("<p>").text(contact.phone));
+                    .addClass("contact-list-main")
+                    .append(
+                        $("<span>")
+                            .addClass("contact-list-thumb-wrapper")
+                            .append(
+                                $("<img>")
+                                    .attr("src", avatarSrc)
+                                    .attr("alt", `${contact.name} avatar`)
+                                    .addClass("contact-list-thumb")
+                            )
+                    )
+                    .append(
+                        $("<span>")
+                            .addClass("contact-list-text")
+                            .append($("<h2>").text(contact.name))
+                            .append($("<p>").text(contact.phone))
+                    );
 
-                $("<li>").append($link).appendTo($list);
+                const $callLink = $("<a>")
+                    .attr("aria-label", `Call ${contact.name}`)
+                    .attr("data-icon", "phone")
+                    .attr("data-iconpos", "notext")
+                    .addClass("contact-list-call");
+
+                if (sanitizedTel) {
+                    $callLink.attr("href", `tel:${sanitizedTel}`);
+                } else {
+                    $callLink
+                        .attr("href", "#")
+                        .attr("tabindex", "-1")
+                        .addClass("ui-state-disabled");
+                }
+
+                $("<li>").append($detailsLink).append($callLink).appendTo($list);
             });
         }
 
@@ -84,7 +157,7 @@
         selectedContactId = contact.id;
 
         elements.detailsName.text(contact.name);
-        elements.detailsInitials.text(utils.getInitials(contact.name));
+        elements.detailsInitials.text(getInitials(contact.name));
         elements.detailsPhone.text(contact.phone);
         elements.detailsEmail.text(contact.email);
         elements.detailsGender.text(contact.gender);
@@ -288,5 +361,5 @@
     global.PhonebookUI = {
         init,
     };
-})(window, jQuery, window.PhonebookStore, window.PhonebookUtils, window.PhonebookValidation);
+})(window, jQuery, window.PhonebookStore, window.PhonebookValidation);
 

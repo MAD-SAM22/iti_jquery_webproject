@@ -1,16 +1,23 @@
-/* global window, PhonebookUtils */
+/* global window */
 
-(function (global, utils) {
+(function (global) {
     "use strict";
 
-    if (!utils) {
-        throw new Error("PhonebookUtils is required for PhonebookStore.");
-    }
-
     const contacts = [];
+    let nextId = 1;
 
     function normalizeGender(value) {
         return value === "Female" ? "Female" : "Male";
+    }
+
+    function generateId() {
+        const id = `contact-${Date.now()}-${nextId}`;
+        nextId += 1;
+        return id;
+    }
+
+    function trimValue(value) {
+        return typeof value === "string" ? value.trim() : value;
     }
 
     const store = {
@@ -28,10 +35,10 @@
 
         add(data) {
             const contact = {
-                id: utils.generateId(),
-                name: utils.trim(data.name) || "",
-                phone: utils.trim(data.phone) || "",
-                email: utils.trim(data.email) || "",
+                id: generateId(),
+                name: trimValue(data.name) || "",
+                phone: trimValue(data.phone) || "",
+                email: trimValue(data.email) || "",
                 gender: normalizeGender(data.gender),
             };
 
@@ -47,15 +54,15 @@
             }
 
             if (Object.prototype.hasOwnProperty.call(updates, "name")) {
-                contact.name = utils.trim(updates.name) || "";
+                contact.name = trimValue(updates.name) || "";
             }
 
             if (Object.prototype.hasOwnProperty.call(updates, "phone")) {
-                contact.phone = utils.trim(updates.phone) || "";
+                contact.phone = trimValue(updates.phone) || "";
             }
 
             if (Object.prototype.hasOwnProperty.call(updates, "email")) {
-                contact.email = utils.trim(updates.email) || "";
+                contact.email = trimValue(updates.email) || "";
             }
 
             if (Object.prototype.hasOwnProperty.call(updates, "gender")) {
@@ -82,5 +89,5 @@
     };
 
     global.PhonebookStore = store;
-})(window, window.PhonebookUtils);
+})(window);
 

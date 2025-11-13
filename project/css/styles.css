@@ -53,35 +53,60 @@ body {
     margin: 0.6rem 0;
 }
 
+.contact-list-main {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex: 1;
+}
+
+.contact-list-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+.contact-list-text h2 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.contact-list-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.contact-list-thumb-wrapper {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.2);
+}
+
+.contact-list-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: block;
+}
+
+.contact-list-call {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
 .details-actions {
     margin-top: 2rem;
 }
 
-.details-actions .ui-btn {
-    width: 4rem;
-    height: 4rem;
-    line-height: 4rem;
-    border-radius: 50%;
-    margin: 0 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
-    border: none;
-}
 
-.details-actions .ui-btn:hover,
-.details-actions .ui-btn:focus {
-    background: linear-gradient(135deg, #4338ca, #6d28d9);
-    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.35);
-}
-
-.details-actions .ui-btn-icon-notext::after {
-    transform: scale(1.8);
-    margin: 0;
-    color: #ffffff;
-}
 
 .ui-popup .ui-content {
     text-align: center;
