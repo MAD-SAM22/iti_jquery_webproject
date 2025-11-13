@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phone Book</title>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/store.js"></script>
+    <script defer src="js/validation.js"></script>
+    <script defer src="js/ui.js"></script>
+    <script defer src="js/app.js"></script>
+</head>
+<body>
+    <!-- Contact List Page -->
+    <div data-role="page" id="contact-list-page">
+        <div data-role="header" data-position="fixed">
+            <h1>Phone Book</h1>
+            <a href="#add-contact-page" data-icon="plus" data-iconpos="notext" aria-label="Add contact"></a>
+        </div>
+        <div role="main" class="ui-content">
+            <form id="search-form">
+                <label for="search-contacts" class="ui-hidden-accessible">Search contacts</label>
+                <input type="search" name="search-contacts" id="search-contacts" placeholder="Search contacts" />
+            </form>
+            <ul data-role="listview" data-inset="true" id="contact-list" data-filter="true" data-input="#search-contacts">
+                <!-- Contacts dynamically injected -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contact Details Page -->
+    <div data-role="page" id="contact-details-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#contact-list-page" data-role="button" data-icon="back" data-rel="back">Back</a>
+            <h1 id="details-name">Contact</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <div class="contact-avatar">
+                <span id="details-initials">NA</span>
+            </div>
+            <div class="contact-info">
+                <p><strong>Phone:</strong> <span id="details-phone"></span></p>
+                <p><strong>Email:</strong> <span id="details-email"></span></p>
+                <p><strong>Gender:</strong> <span id="details-gender"></span></p>
+            </div>
+            <div class="details-actions" data-role="controlgroup" data-type="horizontal">
+                <a href="#edit-contact-page" data-role="button" data-icon="edit" data-iconpos="notext" id="edit-contact-button" aria-label="Edit contact"></a>
+                <a href="#" data-role="button" data-icon="delete" data-iconpos="notext" id="delete-contact-button" aria-label="Delete contact"></a>
+                <a href="#" data-role="button" data-icon="phone" data-iconpos="notext" id="call-contact-button" aria-label="Call contact"></a>
+            </div>
+
+            <div data-role="popup" id="delete-contact-popup" data-theme="b" data-overlay-theme="b" class="delete-popup">
+                <div data-role="header">
+                    <h1>Delete Contact?</h1>
+                </div>
+                <div role="main" class="ui-content">
+                    <p>Are you sure you want to delete this contact?</p>
+                    <a href="#" class="ui-btn ui-btn-inline ui-btn-b ui-corner-all" id="cancel-delete-button">Cancel</a>
+                    <a href="#" class="ui-btn ui-btn-inline ui-btn-a ui-corner-all" id="confirm-delete-button">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Contact Page -->
+    <div data-role="page" id="add-contact-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#contact-list-page" data-role="button" data-icon="back" data-rel="back">Back</a>
+            <h1>New Contact</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <form id="add-contact-form">
+                <div class="ui-field-contain">
+                    <label for="add-name">Name</label>
+                    <input type="text" id="add-name" name="name" required />
+                </div>
+                <div class="ui-field-contain">
+                    <label for="add-phone">Phone</label>
+                    <input type="tel" id="add-phone" name="phone" required pattern="^[0-9()+\\-\\s]{6,}$" />
+                </div>
+                <div class="ui-field-contain">
+                    <label for="add-email">Email</label>
+                    <input type="email" id="add-email" name="email" required />
+                </div>
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <legend>Gender</legend>
+                    <label for="add-gender-male">Male</label>
+                    <input type="radio" name="gender" id="add-gender-male" value="Male" checked />
+                    <label for="add-gender-female">Female</label>
+                    <input type="radio" name="gender" id="add-gender-female" value="Female" />
+                </fieldset>
+                <button type="submit" class="ui-btn ui-btn-b ui-corner-all">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Contact Page -->
+    <div data-role="page" id="edit-contact-page">
+        <div data-role="header" data-position="fixed">
+            <a href="#contact-details-page" data-role="button" data-icon="back" data-rel="back">Back</a>
+            <h1>Edit Contact</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <form id="edit-contact-form">
+                <input type="hidden" id="edit-id" />
+                <div class="ui-field-contain">
+                    <label for="edit-name">Name</label>
+                    <input type="text" id="edit-name" name="name" required />
+                </div>
+                <div class="ui-field-contain">
+                    <label for="edit-phone">Phone</label>
+                    <input type="tel" id="edit-phone" name="phone" required pattern="^[0-9()+\\-\\s]{6,}$" />
+                </div>
+                <div class="ui-field-contain">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" name="email" required />
+                </div>
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <legend>Gender</legend>
+                    <label for="edit-gender-male">Male</label>
+                    <input type="radio" name="edit-gender" id="edit-gender-male" value="Male" />
+                    <label for="edit-gender-female">Female</label>
+                    <input type="radio" name="edit-gender" id="edit-gender-female" value="Female" />
+                </fieldset>
+                <button type="submit" class="ui-btn ui-btn-b ui-corner-all">Update</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
+
